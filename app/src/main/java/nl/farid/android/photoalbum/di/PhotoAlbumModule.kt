@@ -1,11 +1,9 @@
 package nl.farid.android.photoalbum.di
 
-
 import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityRetainedComponent
 import dagger.hilt.components.SingletonComponent
 import nl.farid.android.photoalbum.business.data.cache.abstraction.IPhotoAlbumCacheDataSource
 import nl.farid.android.photoalbum.business.data.cache.implementation.PhotoAlbumCacheDataSource
@@ -13,12 +11,8 @@ import nl.farid.android.photoalbum.business.data.network.abstraction.IPhotoAlbum
 import nl.farid.android.photoalbum.business.data.network.implementation.PhotoAlbumNetworkDataSource
 import nl.farid.android.photoalbum.business.repository.abstraction.IPhotoAlbumRepository
 import nl.farid.android.photoalbum.business.repository.implementation.PhotoAlbumRepository
-import nl.farid.android.photoalbum.business.usecase.abstraction.IGetAlbums
-import nl.farid.android.photoalbum.business.usecase.abstraction.IGetPhotosFromAlbum
-import nl.farid.android.photoalbum.business.usecase.abstraction.IMarkAlbumAsFavorite
-import nl.farid.android.photoalbum.business.usecase.implementation.GetAlbums
-import nl.farid.android.photoalbum.business.usecase.implementation.GetPhotosFromAlbum
-import nl.farid.android.photoalbum.business.usecase.implementation.MarkAlbumAsFavorite
+import nl.farid.android.photoalbum.business.usecase.abstraction.*
+import nl.farid.android.photoalbum.business.usecase.implementation.*
 import nl.farid.android.photoalbum.presentation.datasource.cache.dao.PhotoAlbumDao
 import nl.farid.android.photoalbum.presentation.datasource.cache.database.AppDatabase
 import nl.farid.android.photoalbum.presentation.datasource.network.service.PhotoAlbumService
@@ -27,31 +21,32 @@ import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
-@InstallIn(ActivityRetainedComponent::class)
+@InstallIn(SingletonComponent::class)
 object PhotoAlbumModule {
+
 
     @Module
     @InstallIn(SingletonComponent::class)
     abstract class Bindings {
 
         @Binds
+        abstract fun bindPhotoAlbumRepository(photoAlbumRepository: PhotoAlbumRepository): IPhotoAlbumRepository
+
+        @Binds
         abstract fun bindGetAlbumsUseCase(useCase: GetAlbums): IGetAlbums
 
         @Binds
-        abstract fun bindGetPhotosFromAlbumUserUseCase(useCase: GetPhotosFromAlbum): IGetPhotosFromAlbum
+        abstract fun bindGetPhotosFromAlbumUseCase(useCase: GetPhotosFromAlbum): IGetPhotosFromAlbum
+
+        @Binds
+        abstract fun bindGetAllAlbumsFromCacheUseCase(useCase: GetAllAlbumsFromCache): IGetAllAlbumsFromCache
 
         @Binds
         abstract fun bindMarkAlbumAsFavoriteUseCase(useCase: MarkAlbumAsFavorite): IMarkAlbumAsFavorite
 
-    }
+        @Binds
+        abstract fun bindDeleteAlbumUseCase(useCase: DeleteAlbum): IDeleteAlbum
 
-    @Provides
-    fun providePhotoAlbumRepository(
-        iPhotoAlbumCacheDataSource: IPhotoAlbumCacheDataSource
-    ): IPhotoAlbumRepository {
-        return PhotoAlbumRepository(
-            iPhotoAlbumCacheDataSource
-        )
     }
 
     @Singleton

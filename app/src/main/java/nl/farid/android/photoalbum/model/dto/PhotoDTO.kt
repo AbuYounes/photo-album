@@ -1,5 +1,6 @@
 package nl.farid.android.photoalbum.model.dto
 
+import nl.farid.android.photoalbum.model.app_model.Album
 import nl.farid.android.photoalbum.model.app_model.Photo
 
 data class PhotoDTO(
@@ -19,6 +20,15 @@ data class PhotoDTO(
             url = url
 
         )
+    }
+
+    fun toAlbumList(listDTO: List<PhotoDTO>): List<Photo> {
+        val list: MutableList<Photo> = mutableListOf()
+        listDTO.forEach {
+            list.add(it.toPhoto())
+        }
+
+        return list
     }
 
 }
