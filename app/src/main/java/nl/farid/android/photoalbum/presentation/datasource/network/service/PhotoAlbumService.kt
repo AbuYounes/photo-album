@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 interface PhotoAlbumService {
     @GET("albums")
-    suspend fun getPhotoAlbums(): List<AlbumDTO>
+    suspend fun getAlbums(): List<AlbumDTO>
 
     @GET("photos")
     suspend fun getPhotosFromAlbum(
