@@ -17,6 +17,15 @@ data class AlbumDTO(
         )
     }
 
+    fun toAlbumList(listDTO: List<AlbumDTO>): List<Album> {
+        val list: MutableList<Album> = mutableListOf()
+        listDTO.forEach {
+            list.add(it.toAlbum())
+        }
+
+        return list
+    }
+
     fun toAlbumEntity(): AlbumEntity {
         return AlbumEntity(
             id = id,
