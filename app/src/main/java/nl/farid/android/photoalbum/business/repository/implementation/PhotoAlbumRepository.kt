@@ -22,24 +22,23 @@ class PhotoAlbumRepository
 
     override suspend fun getAllFavoriteAlbums(): Flow<List<Album>> = flow {
         val list: MutableList<Album> = mutableListOf()
-        iPhotoAlbumCacheDataSource.getAllFavoriteAlbumsFlow().collect {
+        iPhotoAlbumCacheDataSource.getAllFavoriteAlbumsFlow().collect { albumEntities ->
             list.clear()
-            it.forEach { albumEntity ->
+            albumEntities.forEach { albumEntity ->
                 list.add(albumEntity.toAlbum())
             }
             emit(list)
         }
     }
 
-
     override suspend fun deleteAlbum(id: Int) {
         iPhotoAlbumCacheDataSource.deleteAlbum(id)
     }
 
     override suspend fun getAlbums(): Flow<List<Album>> = flow {
-        iPhotoAlbumCacheDataSource.getAllFavoriteAlbumsFlow().collect {
+        iPhotoAlbumCacheDataSource.getAllFavoriteAlbumsFlow().collect { albumEntities ->
             val listBHashSet: HashSet<Int> = hashSetOf()
-            it.forEach { albumEntity ->
+            albumEntities.forEach { albumEntity ->
                 listBHashSet.add(albumEntity.id)
             }
 
@@ -53,11 +52,10 @@ class PhotoAlbumRepository
         }
     }
 
-
     override suspend fun getPhotosFromAlbum(albumId: Int): List<Photo> {
         val list: MutableList<Photo> = mutableListOf()
-        iPhotoAlbumNetworkDataSource.getPhotosFromAlbum(albumId).forEach {
-            list.add(it.toPhoto())
+        iPhotoAlbumNetworkDataSource.getPhotosFromAlbum(albumId).forEach { photoDTO ->
+            list.add(photoDTO.toPhoto())
         }
 
         return list
