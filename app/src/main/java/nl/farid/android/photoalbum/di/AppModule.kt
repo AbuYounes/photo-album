@@ -25,7 +25,6 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object AppModule {
 
-    //    Glide
     @Singleton
     @Provides
     fun provideRequestOptions(): RequestOptions {
@@ -62,7 +61,6 @@ object AppModule {
             .addConverterFactory(MoshiConverterFactory.create(moshi))
     }
 
-    //  Room Database
     @Singleton
     @Provides
     fun provideDB(@ApplicationContext context: Context, moshi: Moshi): AppDatabase {

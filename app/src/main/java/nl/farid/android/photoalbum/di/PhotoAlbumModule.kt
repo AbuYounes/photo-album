@@ -5,6 +5,7 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
+import kotlinx.coroutines.FlowPreview
 import nl.farid.android.photoalbum.business.data.cache.abstraction.IPhotoAlbumCacheDataSource
 import nl.farid.android.photoalbum.business.data.cache.implementation.PhotoAlbumCacheDataSource
 import nl.farid.android.photoalbum.business.data.network.abstraction.IPhotoAlbumNetworkDataSource
@@ -24,11 +25,11 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object PhotoAlbumModule {
 
-
     @Module
     @InstallIn(SingletonComponent::class)
     abstract class Bindings {
 
+        @FlowPreview
         @Binds
         abstract fun bindPhotoAlbumRepository(photoAlbumRepository: PhotoAlbumRepository): IPhotoAlbumRepository
 
@@ -46,7 +47,6 @@ object PhotoAlbumModule {
 
         @Binds
         abstract fun bindDeleteAlbumUseCase(useCase: DeleteAlbum): IDeleteAlbum
-
     }
 
     @Singleton

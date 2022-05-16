@@ -14,8 +14,6 @@ class PhotoAlbumNetworkDataSource
     override suspend fun getAlbums(): List<AlbumDTO> =
         photoAlbumService.getAlbums()
 
-
     override suspend fun getPhotosFromAlbum(albumId: Int): List<PhotoDTO> =
         photoAlbumService.getPhotosFromAlbum(albumId)
-
 }
