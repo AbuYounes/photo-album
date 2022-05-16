@@ -13,6 +13,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collectLatest
 import nl.farid.android.photoalbum.R
 import nl.farid.android.photoalbum.databinding.FragmentFavoriteBinding
+import nl.farid.android.photoalbum.presentation.view.albums.ID
 import nl.farid.android.photoalbum.presentation.view.favorites.adapter.FavoritesAdapter
 import nl.farid.android.photoalbum.util.launchAndRepeatWithViewLifecycle
 
@@ -51,13 +52,13 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
     }
 
     private fun initViews() {
-        favoritesAdapter.setOnItemClickListener {
-            val bundle = bundleOf("id" to it.id)
+        favoritesAdapter.setOnItemClickListener { album ->
+            val bundle = bundleOf(ID to album.id)
             findNavController().navigate(R.id.action_favoriteFragment_to_photoFragment, bundle)
         }
 
-        favoritesAdapter.setOnDeleteClickListener {
-            favoriteViewModel.deleteAlbum(it.id)
+        favoritesAdapter.setOnDeleteClickListener { album ->
+            favoriteViewModel.deleteAlbum(album.id)
         }
     }
 
