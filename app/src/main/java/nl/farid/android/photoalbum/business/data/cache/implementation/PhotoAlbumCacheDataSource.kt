@@ -14,8 +14,8 @@ class PhotoAlbumCacheDataSource
     override suspend fun insertFavoriteAlbum(albumEntity: AlbumEntity) =
         photoAlbumDao.insertPhotoAlbum(albumEntity)
 
-    override fun getAllFavoriteAlbums(): Flow<List<AlbumEntity>> =
-        photoAlbumDao.getAllAlbums()
+    override fun getAllFavoriteAlbumsFlow(): Flow<List<AlbumEntity>> =
+        photoAlbumDao.getAllAlbumsFlow()
 
     override suspend fun deleteAlbum(id: Int) {
         photoAlbumDao.deletePhotoAlbum(id)

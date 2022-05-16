@@ -5,6 +5,6 @@ import nl.farid.android.photoalbum.model.entity.AlbumEntity
 
 interface IPhotoAlbumCacheDataSource {
     suspend fun insertFavoriteAlbum(albumEntity: AlbumEntity)
-    fun getAllFavoriteAlbums(): Flow<List<AlbumEntity>>
+    fun getAllFavoriteAlbumsFlow(): Flow<List<AlbumEntity>>
     suspend fun deleteAlbum(id: Int)
 }

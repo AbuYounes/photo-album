@@ -14,50 +14,52 @@ class PhotoAlbumRepository
 @Inject constructor(
     private val iPhotoAlbumCacheDataSource: IPhotoAlbumCacheDataSource,
     private val iPhotoAlbumNetworkDataSource: IPhotoAlbumNetworkDataSource
-): IPhotoAlbumRepository{
+) : IPhotoAlbumRepository {
 
     override suspend fun markAsFavorite(album: Album) {
         iPhotoAlbumCacheDataSource.insertFavoriteAlbum(album.toAlbumEntity())
     }
 
-    override suspend fun getAllFavoriteAlbums(): List<Album> {
+    override suspend fun getAllFavoriteAlbums(): Flow<List<Album>> = flow {
         val list: MutableList<Album> = mutableListOf()
-
-        iPhotoAlbumCacheDataSource.getAllFavoriteAlbums().flattenToList().forEach {
-            list.add(it.toAlbum())
+        iPhotoAlbumCacheDataSource.getAllFavoriteAlbumsFlow().collect {
+            list.clear()
+            it.forEach { albumEntity ->
+                list.add(albumEntity.toAlbum())
+            }
+            emit(list)
         }
-
-        return list
     }
 
 
     override suspend fun deleteAlbum(id: Int) {
-       iPhotoAlbumCacheDataSource.deleteAlbum(id)
+        iPhotoAlbumCacheDataSource.deleteAlbum(id)
     }
 
-    override suspend fun getAlbums(): List<Album> {
-        val list: MutableList<Album> = mutableListOf()
+    override suspend fun getAlbums(): Flow<List<Album>> = flow {
+        iPhotoAlbumCacheDataSource.getAllFavoriteAlbumsFlow().collect {
+            val listBHashSet: HashSet<Int> = hashSetOf()
+            it.forEach { albumEntity ->
+                listBHashSet.add(albumEntity.id)
+            }
 
-        iPhotoAlbumNetworkDataSource.getAlbums().forEach {
-            list.add(it.toAlbum())
+            val list: MutableList<Album> = mutableListOf()
+            iPhotoAlbumNetworkDataSource.getAlbums().forEach { albumDTO ->
+                list.add(albumDTO.toAlbum(listBHashSet.contains(albumDTO.id)))
+            }
+
+            val flowList = list.asFlow().toList()
+            emit(flowList)
         }
-
-        return list
     }
 
 
     override suspend fun getPhotosFromAlbum(albumId: Int): List<Photo> {
         val list: MutableList<Photo> = mutableListOf()
-
         iPhotoAlbumNetworkDataSource.getPhotosFromAlbum(albumId).forEach {
             list.add(it.toPhoto())
         }
 
         return list
     }
-
 }
-
-@FlowPreview
-suspend fun <T> Flow<List<T>>.flattenToList() =
-    flatMapConcat { it.asFlow() }.toList()
