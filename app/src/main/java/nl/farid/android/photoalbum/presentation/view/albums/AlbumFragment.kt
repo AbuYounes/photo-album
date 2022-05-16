@@ -1,74 +1,85 @@
 package nl.farid.android.photoalbum.presentation.view.albums
 
 import android.os.Bundle
-import android.util.Log
 import android.view.View
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.lifecycleScope
-import androidx.lifecycle.repeatOnLifecycle
+import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import androidx.recyclerview.widget.SimpleItemAnimator
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.flow.collect
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.collectLatest
 import nl.farid.android.photoalbum.R
 import nl.farid.android.photoalbum.databinding.FragmentAlbumBinding
-import nl.farid.android.photoalbum.presentation.view.favorites.FavoritesViewModel
-import nl.farid.android.photoalbum.presentation.view.photos.PhotoViewModel
+import nl.farid.android.photoalbum.presentation.view.albums.adapter.PhotoAlbumAdapter
+import nl.farid.android.photoalbum.util.launchAndRepeatWithViewLifecycle
+
+const val ID: String = "id"
 
 @AndroidEntryPoint
 class AlbumFragment : Fragment(R.layout.fragment_album) {
     private val albumViewModel: AlbumViewModel by viewModels()
-    private val photoViewModel: PhotoViewModel by viewModels()
+
+    private lateinit var photoAlbumAdapter: PhotoAlbumAdapter
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentAlbumBinding.bind(view)
 
-        initViews(binding)
+        setupRecyclerView(binding)
+        initViews()
         subscribeObservers(binding)
+
+        albumViewModel.getAlbums()
     }
 
-    private fun initViews(binding: FragmentAlbumBinding) {
-        binding.button1.setOnClickListener {
-            albumViewModel.getAlbums()
+    private fun setupRecyclerView(binding: FragmentAlbumBinding) {
+        photoAlbumAdapter = PhotoAlbumAdapter(requireActivity())
+        binding.photoAlbumRecyclerview.apply {
+            adapter = photoAlbumAdapter
+            layoutManager = LinearLayoutManager(
+                requireActivity(),
+                RecyclerView.VERTICAL,
+                false
+            )
+            isNestedScrollingEnabled = false
         }
 
-        binding.button2.setOnClickListener {
-            photoViewModel.getPhotosOfAlbum(1)
+        val animator = binding.photoAlbumRecyclerview.itemAnimator
+        if (animator is SimpleItemAnimator) {
+            animator.supportsChangeAnimations = false
+        }
+    }
+
+    private fun initViews() {
+        photoAlbumAdapter.setOnItemClickListener {
+            val bundle = bundleOf(ID to it.id)
+            findNavController().navigate(R.id.action_albumFragment_to_photoFragment, bundle)
+        }
+
+        photoAlbumAdapter.setOnAddClickListener {
+            if(it.isFavorite){
+                albumViewModel.deleteAlbum(it.id)
+            } else {
+                albumViewModel.setFavoriteAlbum(it)
+            }
         }
     }
 
     private fun subscribeObservers(binding: FragmentAlbumBinding) {
         launchAndRepeatWithViewLifecycle {
-            albumViewModel.uiState.collect {
-                it.albums.forEach { album ->
-                    Log.d("ALBUMS", "subscribeObservers ID: ${album.id}")
+            albumViewModel.uiState.collectLatest { state ->
+                if(state.isLoading){
+                    binding.progressBar.visibility = View.VISIBLE
+                } else {
+                    binding.progressBar.visibility = View.GONE
+                }
+                state.albums.collectLatest {
+                    photoAlbumAdapter.setData(it)
                 }
             }
-        }
-
-        launchAndRepeatWithViewLifecycle {
-            photoViewModel.uiState.collect {
-                it.photos.forEach { photo ->
-                    Log.d("PHOTOS", "subscribeObservers ID: ${photo.id}")
-                }
-            }
-        }
-
-    }
-
-}
-
-/** Pauses the Collect and Emit and unregisters the consumer when the view goes to the STOPPED state **/
-inline fun Fragment.launchAndRepeatWithViewLifecycle(
-    minActiveState: Lifecycle.State = Lifecycle.State.STARTED,
-    crossinline block: suspend CoroutineScope.() -> Unit
-) {
-    viewLifecycleOwner.lifecycleScope.launch {
-        viewLifecycleOwner.lifecycle.repeatOnLifecycle(minActiveState) {
-            block()
         }
     }
 }

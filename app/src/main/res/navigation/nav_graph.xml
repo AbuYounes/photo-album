@@ -8,12 +8,12 @@
     <fragment
         android:id="@+id/photoFragment"
         android:name="nl.farid.android.photoalbum.presentation.view.photos.PhotoFragment"
-        android:label="fragment_photo"
+        android:label="Photos"
         tools:layout="@layout/fragment_photo" />
     <fragment
         android:id="@+id/albumFragment"
         android:name="nl.farid.android.photoalbum.presentation.view.albums.AlbumFragment"
-        android:label="fragment_album"
+        android:label="Photo Album"
         tools:layout="@layout/fragment_album" >
         <action
             android:id="@+id/action_albumFragment_to_photoFragment"
@@ -22,6 +22,10 @@
     <fragment
         android:id="@+id/favoriteFragment"
         android:name="nl.farid.android.photoalbum.presentation.view.favorites.FavoriteFragment"
-        android:label="fragment_favorite"
-        tools:layout="@layout/fragment_favorite" />
+        android:label="Favorites"
+        tools:layout="@layout/fragment_favorite" >
+        <action
+            android:id="@+id/action_favoriteFragment_to_photoFragment"
+            app:destination="@id/photoFragment" />
+    </fragment>
 </navigation>

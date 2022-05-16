@@ -8,9 +8,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import nl.farid.android.photoalbum.business.usecase.abstraction.GetPhotosFromAlbumResult
 import nl.farid.android.photoalbum.business.usecase.abstraction.IGetPhotosFromAlbum
-import nl.farid.android.photoalbum.model.app_model.Album
 import nl.farid.android.photoalbum.model.app_model.Photo
-import nl.farid.android.photoalbum.presentation.view.favorites.FavoritesState
 import javax.inject.Inject
 
 @HiltViewModel
@@ -27,7 +25,6 @@ class PhotoViewModel
 
     fun getPhotosOfAlbum(albumId: Int){
         setState { copy(isLoading = true) }
-
         viewModelScope.launch {
             when(val result = iGetPhotosFromAlbum.getPhotoFromAlbum(albumId)){
                 is GetPhotosFromAlbumResult.Error -> {
