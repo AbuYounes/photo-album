@@ -1,6 +1,7 @@
 package nl.farid.android.photoalbum.presentation.view.favorites
 
 import android.os.Bundle
+import android.view.Menu
 import android.view.View
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
@@ -16,6 +17,10 @@ import nl.farid.android.photoalbum.databinding.FragmentFavoriteBinding
 import nl.farid.android.photoalbum.presentation.view.albums.ID
 import nl.farid.android.photoalbum.presentation.view.favorites.adapter.FavoritesAdapter
 import nl.farid.android.photoalbum.util.launchAndRepeatWithViewLifecycle
+import android.view.MenuInflater
+
+
+
 
 @AndroidEntryPoint
 class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
@@ -25,6 +30,7 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentFavoriteBinding.bind(view)
+        setHasOptionsMenu(true)
 
         setupRecyclerView(binding)
         initViews()
@@ -75,5 +81,10 @@ class FavoriteFragment : Fragment(R.layout.fragment_favorite) {
                 }
             }
         }
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        for (i in 0 until menu.size()) menu.getItem(i).isVisible = false
+        super.onCreateOptionsMenu(menu, inflater)
     }
 }
