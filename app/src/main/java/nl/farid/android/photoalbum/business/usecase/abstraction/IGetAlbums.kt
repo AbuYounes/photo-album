@@ -1,6 +1,5 @@
 package nl.farid.android.photoalbum.business.usecase.abstraction
 
-import kotlinx.coroutines.flow.Flow
 import nl.farid.android.photoalbum.model.app_model.Album
 
 interface IGetAlbums {

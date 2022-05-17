@@ -3,11 +3,13 @@ package nl.farid.android.photoalbum.presentation.view.albums
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import nl.farid.android.photoalbum.business.usecase.abstraction.*
 import nl.farid.android.photoalbum.model.app_model.Album
 import nl.farid.android.photoalbum.util.AlbumManager
+import java.lang.Exception
 import javax.inject.Inject
 
 @HiltViewModel
@@ -16,6 +18,14 @@ class AlbumViewModel
     private val iGetAlbums: IGetAlbums,
     private val albumManager: AlbumManager
 ): ViewModel(){
+
+    private val _effect: Channel<ErrorState> = Channel()
+    val effect = _effect.receiveAsFlow()
+
+    private fun setEffect(builder: () -> ErrorState) {
+        val effectValue = builder()
+        viewModelScope.launch { _effect.send(effectValue) }
+    }
 
     val uiState: StateFlow<AlbumState> = MutableStateFlow(AlbumState())
 
@@ -28,7 +38,8 @@ class AlbumViewModel
         viewModelScope.launch {
             when(val result = iGetAlbums.getAlbums()){
                 is GetAlbumResult.Error -> {
-                    setState { copy(isLoading = false, error = result.e) }
+                    setState { copy(isLoading = false) }
+                    setEffect { ErrorState(result.e) }
                 }
                 is GetAlbumResult.Success -> {
                     setState { copy(isLoading = false, albums = result.list) }
@@ -45,5 +56,8 @@ class AlbumViewModel
 data class AlbumState(
     val isLoading: Boolean = false,
     val albums: List<Album> = emptyList(),
-    val error: Throwable? = null
+)
+
+data class ErrorState(
+    val error: Exception? = null
 )
