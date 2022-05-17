@@ -7,14 +7,14 @@ import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import nl.farid.android.photoalbum.business.usecase.abstraction.*
 import nl.farid.android.photoalbum.model.app_model.Album
+import nl.farid.android.photoalbum.util.AlbumManager
 import javax.inject.Inject
 
 @HiltViewModel
 class AlbumViewModel
 @Inject constructor(
     private val iGetAlbums: IGetAlbums,
-    private val iMarkAlbumAsFavorite: IMarkAlbumAsFavorite,
-    private val iDeleteAlbum: IDeleteAlbum
+    private val albumManager: AlbumManager
 ): ViewModel(){
 
     val uiState: StateFlow<AlbumState> = MutableStateFlow(AlbumState())
@@ -37,38 +37,13 @@ class AlbumViewModel
         }
     }
 
-    fun setFavoriteAlbum(album: Album){
-        setState { copy(isLoading = true) }
-        viewModelScope.launch {
-            when(val result = iMarkAlbumAsFavorite.markAsFavorite(album)){
-                is MarkAlbumAsFavoriteResult.Error -> {
-                    setState { copy(isLoading = false, error = result.e) }
-                }
-                MarkAlbumAsFavoriteResult.Success -> {
-                    setState { copy(isLoading = false ) }
-                }
-            }
-        }
-    }
-
-    fun deleteAlbum(albumId: Int){
-        setState { copy(isLoading = true) }
-        viewModelScope.launch {
-            when(val result = iDeleteAlbum.deleteAlbum(albumId)){
-                is DeleteAlbumResult.Error -> {
-                    setState { copy(isLoading = false, error = result.e) }
-                }
-                DeleteAlbumResult.Success -> {
-                    setState { copy(isLoading = false) }
-                }
-            }
-        }
+    fun setSelectedAlbum(album: Album){
+        albumManager.setAlbum(album)
     }
 }
 
 data class AlbumState(
     val isLoading: Boolean = false,
-    val isMarkedAsFavorite: Boolean = false,
-    val albums: Flow<List<Album>> = emptyFlow(),
+    val albums: List<Album> = emptyList(),
     val error: Throwable? = null
 )

@@ -5,8 +5,7 @@ import nl.farid.android.photoalbum.model.entity.AlbumEntity
 data class Album(
     val id: Int,
     val title: String,
-    val userId: Int,
-    val isFavorite: Boolean
+    val userId: Int
 ) {
     fun toAlbumEntity(): AlbumEntity {
         return AlbumEntity(

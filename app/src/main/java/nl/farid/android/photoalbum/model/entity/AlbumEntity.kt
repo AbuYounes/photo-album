@@ -15,8 +15,7 @@ data class AlbumEntity(
         return Album(
             id = id,
             title = title,
-            userId = userId,
-            isFavorite = true
+            userId = userId
         )
     }
 }

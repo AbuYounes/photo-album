@@ -12,6 +12,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.collect
 import nl.farid.android.photoalbum.R
 import nl.farid.android.photoalbum.databinding.FragmentPhotoBinding
+import nl.farid.android.photoalbum.model.app_model.Album
 import nl.farid.android.photoalbum.presentation.view.albums.ID
 import nl.farid.android.photoalbum.presentation.view.photos.adapter.PhotoAdapter
 import nl.farid.android.photoalbum.util.launchAndRepeatWithViewLifecycle
@@ -28,7 +29,10 @@ class PhotoFragment: Fragment(R.layout.fragment_photo) {
         super.onViewCreated(view, savedInstanceState)
         val binding = FragmentPhotoBinding.bind(view)
 
+        photoViewModel.getSelectedAlbum()
+        photoViewModel.getAlbumsFromCache()
         setupRecyclerView(binding)
+        initViews(binding)
         subscribeObservers(binding)
         arguments?.let { photoViewModel.getPhotosOfAlbum(it.getInt(ID)) }
     }
@@ -51,6 +55,17 @@ class PhotoFragment: Fragment(R.layout.fragment_photo) {
         }
     }
 
+    private fun initViews(binding: FragmentPhotoBinding) {
+        binding.favoritesFab.setOnClickListener {
+            if(!photoViewModel.uiState.value.isMarkedAsFavorite){
+                photoViewModel.uiState.value.album?.let { it1 -> photoViewModel.setFavoriteAlbum(it1) }
+            } else {
+                photoViewModel.uiState.value.album?.let { it1 -> photoViewModel.deleteAlbum(it1.id) }
+            }
+        }
+    }
+
+
     private fun subscribeObservers(binding: FragmentPhotoBinding) {
         launchAndRepeatWithViewLifecycle {
             photoViewModel.uiState.collect { state ->
@@ -58,6 +73,12 @@ class PhotoFragment: Fragment(R.layout.fragment_photo) {
                     binding.progressBar.visibility = View.VISIBLE
                 } else {
                     binding.progressBar.visibility = View.GONE
+                }
+
+                if(state.isMarkedAsFavorite){
+                    binding.favoritesFab.setImageResource(R.drawable.favorite)
+                } else {
+                    binding.favoritesFab.setImageResource(R.drawable.not_favorite_border)
                 }
                 photoAdapter.setData(state.photos)
             }

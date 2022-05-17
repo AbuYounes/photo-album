@@ -20,9 +20,6 @@ class PhotoAlbumDiffUtil (
             oldList[oldItemPosition].id!= newList[newItemPosition].id -> {
                 false
             }
-            oldList[oldItemPosition].isFavorite!= newList[newItemPosition].isFavorite -> {
-                false
-            }
 
             else -> {
                 true

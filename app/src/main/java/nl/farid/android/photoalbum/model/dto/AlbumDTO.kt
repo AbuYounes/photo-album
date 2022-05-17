@@ -8,12 +8,11 @@ data class AlbumDTO(
     val userId: Int
 ) {
 
-    fun toAlbum(isFavorite: Boolean): Album {
+    fun toAlbum(): Album {
         return Album(
             id = id,
             title = title,
-            userId = userId,
-            isFavorite = isFavorite
+            userId = userId
         )
     }
 }

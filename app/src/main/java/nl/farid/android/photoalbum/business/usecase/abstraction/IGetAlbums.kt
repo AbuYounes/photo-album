@@ -8,6 +8,6 @@ interface IGetAlbums {
 }
 
 sealed class GetAlbumResult{
-    data class Success(val list: Flow<List<Album>>): GetAlbumResult()
+    data class Success(val list: List<Album>): GetAlbumResult()
     data class Error(val e: Exception): GetAlbumResult()
 }

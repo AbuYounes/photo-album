@@ -15,6 +15,9 @@ interface PhotoAlbumDao {
     @Query("SELECT * FROM album")
     fun getAllAlbumsFlow(): Flow<List<AlbumEntity>>
 
+    @Query("SELECT * FROM album")
+    suspend fun getAllAlbums(): List<AlbumEntity>
+
     @Query("DELETE FROM album WHERE id = :id")
     suspend fun deletePhotoAlbum(id: Int)
 }

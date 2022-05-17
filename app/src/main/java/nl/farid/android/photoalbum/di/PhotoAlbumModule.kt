@@ -42,6 +42,10 @@ object PhotoAlbumModule {
         @Binds
         abstract fun bindGetAllAlbumsFromCacheUseCase(useCase: GetAllAlbumsFromCache): IGetAllAlbumsFromCache
 
+
+        @Binds
+        abstract fun bindGetAlbumsFromCacheUseCase(useCase: GetAlbumsFromCache): IGetAlbumsFromCache
+
         @Binds
         abstract fun bindMarkAlbumAsFavoriteUseCase(useCase: MarkAlbumAsFavorite): IMarkAlbumAsFavorite
 

@@ -13,6 +13,7 @@ import nl.farid.android.photoalbum.model.app_model.Photo
 import com.bumptech.glide.load.model.LazyHeaders
 
 import com.bumptech.glide.load.model.GlideUrl
+import nl.farid.android.photoalbum.model.app_model.Album
 
 class PhotoAdapter(private val requestManager: RequestManager): RecyclerView.Adapter<PhotoAdapter.PhotoViewHolder>() {
 

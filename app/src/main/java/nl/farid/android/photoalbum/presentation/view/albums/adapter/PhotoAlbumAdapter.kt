@@ -33,21 +33,6 @@ class PhotoAlbumAdapter(private val context: Context): RecyclerView.Adapter<Phot
             onClickListener?.let { it(item) }
         }
 
-        holder.binding.favoritesBtn.setOnClickListener {
-            notifyItemChanged(position)
-            onAddClickListener?.let { it(item) }
-        }
-
-        when(item.isFavorite){
-            true ->
-                holder.binding.favoritesBtn.setImageDrawable(
-                    AppCompatResources.getDrawable(context, R.drawable.favorite)
-                )
-            false ->
-                holder.binding.favoritesBtn.setImageDrawable(
-                    AppCompatResources.getDrawable(context, R.drawable.not_favorite_border)
-                )
-        }
     }
 
     override fun getItemCount(): Int = photoAlbums.size
@@ -65,11 +50,7 @@ class PhotoAlbumAdapter(private val context: Context): RecyclerView.Adapter<Phot
         onClickListener = listener
     }
 
-    private var onAddClickListener: ((Album) -> Unit)? = null
 
-    fun setOnAddClickListener(listener: (Album) -> Unit) {
-        onAddClickListener = listener
-    }
 
     inner class PhotoAlbumViewHolder(val binding: RowAlbumBinding) :
         RecyclerView.ViewHolder(binding.root)

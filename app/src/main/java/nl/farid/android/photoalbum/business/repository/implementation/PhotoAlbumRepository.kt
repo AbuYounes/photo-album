@@ -31,25 +31,25 @@ class PhotoAlbumRepository
         }
     }
 
+    override suspend fun getAllFavoriteAlbumsNoFlow(): List<Album> {
+        val list: MutableList<Album> = mutableListOf()
+        iPhotoAlbumCacheDataSource.getAllFavoriteAlbums().forEach {
+            list.add(it.toAlbum())
+        }
+
+        return list
+    }
+
     override suspend fun deleteAlbum(id: Int) {
         iPhotoAlbumCacheDataSource.deleteAlbum(id)
     }
 
-    override suspend fun getAlbums(): Flow<List<Album>> = flow {
-        iPhotoAlbumCacheDataSource.getAllFavoriteAlbumsFlow().collect { albumEntities ->
-            val listBHashSet: HashSet<Int> = hashSetOf()
-            albumEntities.forEach { albumEntity ->
-                listBHashSet.add(albumEntity.id)
-            }
-
+    override suspend fun getAlbums(): List<Album> {
             val list: MutableList<Album> = mutableListOf()
             iPhotoAlbumNetworkDataSource.getAlbums().forEach { albumDTO ->
-                list.add(albumDTO.toAlbum(listBHashSet.contains(albumDTO.id)))
+                list.add(albumDTO.toAlbum())
             }
-
-            val flowList = list.asFlow().toList()
-            emit(flowList)
-        }
+        return list
     }
 
     override suspend fun getPhotosFromAlbum(albumId: Int): List<Photo> {

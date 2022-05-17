@@ -55,16 +55,9 @@ class AlbumFragment : Fragment(R.layout.fragment_album) {
 
     private fun initViews() {
         photoAlbumAdapter.setOnItemClickListener { album ->
+            albumViewModel.setSelectedAlbum(album)
             val bundle = bundleOf(ID to album.id)
             findNavController().navigate(R.id.action_albumFragment_to_photoFragment, bundle)
-        }
-
-        photoAlbumAdapter.setOnAddClickListener { album ->
-            if(album.isFavorite){
-                albumViewModel.deleteAlbum(album.id)
-            } else {
-                albumViewModel.setFavoriteAlbum(album)
-            }
         }
     }
 
@@ -76,9 +69,8 @@ class AlbumFragment : Fragment(R.layout.fragment_album) {
                 } else {
                     binding.progressBar.visibility = View.GONE
                 }
-                state.albums.collectLatest { albums ->
-                    photoAlbumAdapter.setData(albums)
-                }
+
+                photoAlbumAdapter.setData(state.albums)
             }
         }
     }

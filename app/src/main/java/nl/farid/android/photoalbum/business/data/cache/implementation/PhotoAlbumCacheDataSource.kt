@@ -17,6 +17,9 @@ class PhotoAlbumCacheDataSource
     override fun getAllFavoriteAlbumsFlow(): Flow<List<AlbumEntity>> =
         photoAlbumDao.getAllAlbumsFlow()
 
+    override suspend fun getAllFavoriteAlbums(): List<AlbumEntity> =
+        photoAlbumDao.getAllAlbums()
+
     override suspend fun deleteAlbum(id: Int) {
         photoAlbumDao.deletePhotoAlbum(id)
     }
